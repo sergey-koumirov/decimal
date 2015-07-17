@@ -430,6 +430,19 @@ func (d Decimal) Truncate(precision int32) Decimal {
 	return d
 }
 
+func (d *Decimal) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var str string
+
+	unmarshal(&str)
+
+	decimal, err := NewFromString(str)
+	*d = decimal
+	if err != nil {
+		return fmt.Errorf("Error decoding string '%s': %s", str, err)
+	}
+	return nil
+}
+
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (d *Decimal) UnmarshalJSON(decimalBytes []byte) error {
 	str, err := unquoteIfQuoted(decimalBytes)
